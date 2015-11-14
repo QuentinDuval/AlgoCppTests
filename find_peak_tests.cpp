@@ -16,14 +16,14 @@ TEST(FindPeakTest, empty_vector)
    EXPECT_EQ(end(empty), find_peak(begin(empty), end(empty)));
 }
 
-TEST(FindPeakTest, filled_sequence)
+TEST(FindPeakTest, filled_vector)
 {
    std::vector<int> seq{ 1, 2, 3, 2, 4, 5, 6 };
    EXPECT_EQ(3, *find_peak_rec(seq));
    EXPECT_EQ(3, *find_peak(seq));
 }
 
-TEST(FindPeakTest, monotonous_sequence)
+TEST(FindPeakTest, monotonous_vector)
 {
    std::vector<int> seq{ 1, 2, 3, 4, 5, 6, 7, 8 };
    EXPECT_EQ(8, *find_peak_rec(seq));
