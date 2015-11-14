@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <functional>
+#include <list>
+#include <vector>
 
 
 //-----------------------------------------------------------------------------
@@ -39,3 +41,11 @@ TEST(FindPeakTest, monotonous_vector)
 
 //-----------------------------------------------------------------------------
 
+TEST(FindPeakTest, monotonous_list)
+{
+   std::list<int> seq{ 1, 2, 3, 4, 5, 6, 7, 8 };
+   EXPECT_EQ(8, *find_peak_rec(seq));
+   EXPECT_EQ(8, *find_peak(seq));
+}
+
+//-----------------------------------------------------------------------------
