@@ -6,6 +6,15 @@
 
 //-----------------------------------------------------------------------------
 
+TEST(CountingSortTest, empty_list)
+{
+   std::vector<std::string> strings;
+   std::vector<std::string> expected;
+
+   counting_sort(begin(strings), end(strings), std::mem_fn(&std::string::length));
+   ASSERT_EQ(expected.size(), strings.size());
+}
+
 TEST(CountingSortTest, string_by_length)
 {
    std::vector<std::string> strings{ "abcd", "ef", "ghi", "jklm", "" };
