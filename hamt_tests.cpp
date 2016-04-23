@@ -2,8 +2,9 @@
 #include <hamt.hpp>
 #include <timer.hpp>
 
+#include <map>
 #include <string>
-
+#include <unordered_map>
 
 //-----------------------------------------------------------------------------
 
@@ -20,8 +21,8 @@ TEST(HamtTest, add_key)
    hamt.insert({ "b", "beta" });
    
    EXPECT_EQ(2, hamt.size());
-   EXPECT_EQ(true, hamt.contains("a"));
-   EXPECT_EQ(true, hamt.contains("b"));
+   EXPECT_EQ(1, hamt.count("a"));
+   EXPECT_EQ(1, hamt.count("b"));
    EXPECT_EQ("alpha", hamt.find("a").second);
    EXPECT_EQ("beta", hamt.find("b").second);
 }
@@ -33,7 +34,7 @@ TEST(HamtTest, collide_key)
    hamt.insert({ "a", "alpha-beta" });
 
    EXPECT_EQ(1, hamt.size());
-   EXPECT_EQ(true, hamt.contains("a"));
+   EXPECT_EQ(1, hamt.count("a"));
    EXPECT_EQ("alpha-beta", hamt.find("a").second);
 }
 
@@ -42,31 +43,46 @@ TEST(HamtTest, collide_key)
 // PERFORMANCE
 //-----------------------------------------------------------------------------
 
-TEST(HamtTest, perf_no_collisions)
+template<typename AssociativeCont>
+void perf_no_collisions_test(AssociativeCont& c, std::size_t size)
 {
-   std::vector<std::pair<int, int>> inputs;
-   static const std::size_t SIZE = 1000000;
-
-   hash_array_mapped_trie<int, int> hamt;
-
    show_time(std::cout, "1,000,000 int inserts in ms", 1, [&]()
    {
-      for (size_t i = 0; i < SIZE; ++i)
-         hamt.insert({ i, i });
+      for (size_t i = 0; i < size; ++i)
+         c.insert({ i, i });
    });
 
    show_time(std::cout, "1,000,000 int searches in ms", 1, [&]()
    {
-      for (size_t i = 0; i < SIZE; ++i)
-         EXPECT_TRUE(hamt.contains(i));
+      for (size_t i = 0; i < size; ++i)
+         EXPECT_EQ(1, c.count(i));
    });
 
    show_time(std::cout, "1,000,000 int misses in ms", 1, [&]()
    {
-      for (size_t i = 0; i < SIZE; ++i)
-         EXPECT_FALSE(hamt.contains(SIZE + i));
+      for (size_t i = 0; i < size; ++i)
+         EXPECT_EQ(0, c.count(size + i));
    });
 }
+
+TEST(HamtTest, perf_no_collisions)
+{
+   static const std::size_t SIZE = 1000000;
+
+   std::cout << "HAMT" << std::endl;
+   hash_array_mapped_trie<int, int> hamt;
+   perf_no_collisions_test(hamt, SIZE);
+
+   std::cout << "STD::MAP" << std::endl;
+   std::map<int, int> omap;
+   perf_no_collisions_test(omap, SIZE);
+
+   std::cout << "STD::UNORDERED_MAP" << std::endl;
+   std::unordered_map<int, int> umap;
+   perf_no_collisions_test(umap, SIZE);
+}
+
+//-----------------------------------------------------------------------------
 
 TEST(HamtTest, perf_lots_of_collisions)
 {
@@ -94,7 +110,7 @@ TEST(HamtTest, perf_lots_of_collisions)
       for (size_t i = 0; i < 1000000; ++i)
       {
          size_t p = i % inputs.size();
-         EXPECT_TRUE(hamt.contains(inputs[p].first));
+         EXPECT_EQ(1, hamt.count(inputs[p].first));
       }
    });
 
@@ -103,7 +119,7 @@ TEST(HamtTest, perf_lots_of_collisions)
       for (size_t i = 0; i < 1000000; ++i)
       {
          size_t p = i % misses.size();
-         EXPECT_FALSE(hamt.contains(misses[p].first));
+         EXPECT_EQ(0, hamt.count(misses[p].first));
       }
    });
 }
