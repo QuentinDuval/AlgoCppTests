@@ -18,7 +18,7 @@ TEST(HamtTest, add_key)
    hamt.insert("a", "alpha");
    hamt.insert("b", "beta");
    
-   //EXPECT_EQ(1, hamt.size());
+   EXPECT_EQ(2, hamt.size());
    EXPECT_EQ(true, hamt.contains("a"));
    EXPECT_EQ(true, hamt.contains("b"));
    EXPECT_EQ("alpha", hamt.find("a").second);
@@ -31,7 +31,7 @@ TEST(HamtTest, collide_key)
    hamt.insert("a", "alpha");
    hamt.insert("a", "alpha-beta");
 
-   //EXPECT_EQ(1, hamt.size());
+   EXPECT_EQ(1, hamt.size());
    EXPECT_EQ(true, hamt.contains("a"));
    EXPECT_EQ("alpha-beta", hamt.find("a").second);
 }
