@@ -37,13 +37,30 @@ TEST(HamtTest, collide_key)
    EXPECT_EQ("alpha-beta", hamt.find("a").second);
 }
 
-TEST(HamtTest, perf_insert)
+
+//-----------------------------------------------------------------------------
+// PERFORMANCE
+//-----------------------------------------------------------------------------
+
+TEST(HamtTest, perf_insert_no_collisions)
+{
+   std::vector<std::pair<int, int>> inputs;
+
+   show_time(std::cout, "1,000,000 int inserts in ms", 1, [&]()
+   {
+      hash_array_mapped_trie<int, int> hamt;
+      for (size_t i = 0; i < 1000000; ++i)
+         hamt.insert(i, i);
+   });
+}
+
+TEST(HamtTest, perf_insert_lots_of_collisions)
 {
    std::vector<std::pair<std::string, std::string>> inputs;
    for (char c : "abcdefghijklmnopqrstuvwxyz")
       inputs.emplace_back(std::string(10, c), std::string(50, c));
 
-   show_time(std::cout, "1,000,000 inserts in ms", 1, [&]()
+   show_time(std::cout, "1,000,000 string inserts in ms", 1, [&]()
    {
       hash_array_mapped_trie<std::string, std::string> hamt;
       for (size_t i = 0; i < 1000000; ++i)
