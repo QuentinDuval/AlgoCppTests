@@ -42,27 +42,33 @@ TEST(HamtTest, collide_key)
 // PERFORMANCE
 //-----------------------------------------------------------------------------
 
-TEST(HamtTest, perf_insert_no_collisions)
+TEST(HamtTest, perf_no_collisions)
 {
    std::vector<std::pair<int, int>> inputs;
+   hash_array_mapped_trie<int, int> hamt;
 
    show_time(std::cout, "1,000,000 int inserts in ms", 1, [&]()
    {
-      hash_array_mapped_trie<int, int> hamt;
       for (size_t i = 0; i < 1000000; ++i)
          hamt.insert(i, i);
    });
+
+   show_time(std::cout, "1,000,000 int searches in ms", 1, [&]()
+   {
+      for (size_t i = 0; i < 1000000; ++i)
+         EXPECT_TRUE(hamt.contains(i));
+   });
 }
 
-TEST(HamtTest, perf_insert_lots_of_collisions)
+TEST(HamtTest, perf_lots_of_collisions)
 {
    std::vector<std::pair<std::string, std::string>> inputs;
    for (char c : "abcdefghijklmnopqrstuvwxyz")
       inputs.emplace_back(std::string(10, c), std::string(50, c));
 
+   hash_array_mapped_trie<std::string, std::string> hamt;
    show_time(std::cout, "1,000,000 string inserts in ms", 1, [&]()
    {
-      hash_array_mapped_trie<std::string, std::string> hamt;
       for (size_t i = 0; i < 1000000; ++i)
       {
          size_t p = i % inputs.size();
