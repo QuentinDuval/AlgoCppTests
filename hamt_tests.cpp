@@ -39,12 +39,17 @@ TEST(HamtTest, collide_key)
 
 TEST(HamtTest, perf_insert)
 {
-   show_time(std::cout, "2,000,000 inserts in ms", 1, []() {
+   std::vector<std::pair<std::string, std::string>> inputs;
+   for (char c : "abcdefghijklmnopqrstuvwxyz")
+      inputs.emplace_back(std::string(10, c), std::string(50, c));
+
+   show_time(std::cout, "1,000,000 inserts in ms", 1, [&]()
+   {
       hash_array_mapped_trie<std::string, std::string> hamt;
       for (size_t i = 0; i < 1000000; ++i)
       {
-         hamt.insert("a", "alpha");
-         hamt.insert("a", "alpha-beta");
+         size_t p = i % inputs.size();
+         hamt.insert(inputs[p].first, inputs[p].second);
       }
    });
 }
