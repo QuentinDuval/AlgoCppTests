@@ -49,7 +49,7 @@ void perf_no_collisions_test(AssociativeCont& c, std::size_t size)
    show_time(std::cout, "1,000,000 int inserts in ms", 1, [&]()
    {
       for (size_t i = 0; i < size; ++i)
-         c.insert({ i, i });
+         c.insert({ size - i - 1, i });
    });
 
    show_time(std::cout, "1,000,000 int searches in ms", 1, [&]()
