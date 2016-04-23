@@ -16,8 +16,8 @@ TEST(HamtTest, empty_map)
 TEST(HamtTest, add_key)
 {
    hash_array_mapped_trie<std::string, std::string> hamt;
-   hamt.insert("a", "alpha");
-   hamt.insert("b", "beta");
+   hamt.insert({ "a", "alpha" });
+   hamt.insert({ "b", "beta" });
    
    EXPECT_EQ(2, hamt.size());
    EXPECT_EQ(true, hamt.contains("a"));
@@ -29,8 +29,8 @@ TEST(HamtTest, add_key)
 TEST(HamtTest, collide_key)
 {
    hash_array_mapped_trie<std::string, std::string> hamt;
-   hamt.insert("a", "alpha");
-   hamt.insert("a", "alpha-beta");
+   hamt.insert({ "a", "alpha" });
+   hamt.insert({ "a", "alpha-beta" });
 
    EXPECT_EQ(1, hamt.size());
    EXPECT_EQ(true, hamt.contains("a"));
@@ -45,13 +45,14 @@ TEST(HamtTest, collide_key)
 TEST(HamtTest, perf_no_collisions)
 {
    std::vector<std::pair<int, int>> inputs;
-   hash_array_mapped_trie<int, int> hamt;
    static const std::size_t SIZE = 1000000;
+
+   hash_array_mapped_trie<int, int> hamt;
 
    show_time(std::cout, "1,000,000 int inserts in ms", 1, [&]()
    {
       for (size_t i = 0; i < SIZE; ++i)
-         hamt.insert(i, i);
+         hamt.insert({ i, i });
    });
 
    show_time(std::cout, "1,000,000 int searches in ms", 1, [&]()
@@ -84,7 +85,7 @@ TEST(HamtTest, perf_lots_of_collisions)
       for (size_t i = 0; i < 1000000; ++i)
       {
          size_t p = i % inputs.size();
-         hamt.insert(inputs[p].first, inputs[p].second);
+         hamt.insert(inputs[p]);
       }
    });
 
