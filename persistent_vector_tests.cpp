@@ -25,15 +25,26 @@ TEST(PersistentVectorTest, few_push_back)
    EXPECT_EQ(1, v2.size());
    EXPECT_EQ(2, v3.size());
    EXPECT_EQ(3, v4.size());
+
+   EXPECT_EQ("a", v4.at(0));
+   EXPECT_EQ("b", v4.at(1));
+   EXPECT_EQ("c", v4.at(2));
 }
 
 TEST(PersistentVectorTest, lots_push_back)
 {
+   static const int SIZE = 1000;
    std::vector<persistent_vector<int>> vs(1);
-   for (int i = 0; i < 1000; i++)
+
+   for (int i = 0; i < SIZE; i++)
       vs.push_back(vs.back().push_back(i));
-   for (int i = 0; i < 1000; i++)
+
+   for (int i = 0; i <= SIZE; i++)
       EXPECT_EQ(i, vs[i].size());
+
+   auto& last = vs.back();
+   for (int i = 0; i < SIZE; i++)
+      EXPECT_EQ(i, last.at(i));
 }
 
 //-----------------------------------------------------------------------------
